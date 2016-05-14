@@ -1,11 +1,11 @@
 'use strict';
-
+var angular = require('angular');
 var app = angular.module('todoListApp');
 
 app.service('dataService', function( $http ){
 
 	this.getTodos = function( callback ){
-		$http.get('mock/todos.json').then( callback );
+		$http.get('/api/todos').then( callback );
 	};
 
 	this.deleteTodo = function( todo ) {
