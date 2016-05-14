@@ -1,5 +1,5 @@
 'use strict';
-
+var angular = require('angular');
 var app = angular.module('todoListApp');
 
 app.controller("mainCtrl", function($scope, dataService){
@@ -9,23 +9,8 @@ app.controller("mainCtrl", function($scope, dataService){
 		$scope.todos.unshift(todo);
 	};	
 
-	$scope.deleteTodo = function( todo, $index ) {
-		dataService.deleteTodo( todo );
-		$scope.todos.splice($index, 1);
-	};
-
-	$scope.saveTodos = function(){
-		var filterTodos = $scope.todos.filter(function( todo ){
-			if (todo.edited) {
-				return todo;
-			}
-		});
-		dataService.saveTodos( filterTodos );
-	}
-
 	dataService.getTodos(function(res){
-		console.log(res.data);
-		$scope.todos = res.data;
+		$scope.todos = res.data.todos;
 	});
 
 });
