@@ -1,7 +1,8 @@
 'use strict';
 
 var express = require('express'),
-	todos   = require('../../mock/todos.json');
+	todos   = require('../../mock/todos.json'),
+	Todo    = require('../models/todo.js');
 
 // Un enrutador es como otra app que tendra sus propias
 // rutas, esto es una buena practica para evitar conflictos
@@ -9,12 +10,47 @@ var express = require('express'),
 var router = express.Router();
 
 router.get('/todos', function(req, res){
-	res.json({ todos: todos });
+	Todo.find( {}, function(err, todos){
+		if (err) {
+			return res.status(500).json({ message: err.message });
+		}
+
+		res.json({ todos: todos });
+
+	} );
 });
 
-// TODO: Add POST route to create new entries.
+router.post('/todos', function(req, res){
+    var todo = req.body;
 
-// TODO: Add PUT route to update a existing entry.
+    Todo.create(todo, function(err, todo){
+        if (err){
+            return res.status(500).json({ err: err.message});
+        }
+
+        res.json({ todo: todo, message: 'Todo Created.'});
+
+    });
+});
+
+router.put('/todos/:id', function(req, res){
+    var id = req.params.id;
+    var todo = req.body;
+
+    // ID validation.
+    if(todo && todo._id !== id){
+        return res.status(500).json({ err: "Ids don't match!" });
+    }
+
+    Todo.findByIdAndUpdate(id, todo, { new: true }, function(err, todo) {
+        if(err) {
+            return res.status(500).json({ err: err.message });
+        }
+
+        res.json({ todo: todo, message: 'Todo Updated.' });
+    });
+
+});
 
 // TODO: Add DELETE route to delete a existing entry.
 
